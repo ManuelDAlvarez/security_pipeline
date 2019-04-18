@@ -10,7 +10,7 @@ pipeline {
 		stage('Messages') {
 			steps {
 				echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
-				echo "You say ${NETWORK} for ${CONFIGNAME}"
+				echo "You say ${NETWORK}"
 				//sh "http --auth-type edgegrid -a default: GET :/papi/v1/contracts | jq "
 			}
 		}
