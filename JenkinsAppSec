@@ -1,0 +1,18 @@
+pipeline {
+	agent any
+	parameters {
+	choice(name: 'NETWORK', choices: ['staging', 'production'], description: 'The network to activate the secure configuration')	
+	}
+	environment {
+    	PROJ = "/bin:/usr/local/bin:/usr/bin"
+	}
+	stages {
+		stage('Messages') {
+			steps {
+				echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
+				echo "You say ${NETWORK} for ${CONFIGNAME}"
+				//sh "http --auth-type edgegrid -a default: GET :/papi/v1/contracts | jq "
+			}
+		}
+	}
+}
