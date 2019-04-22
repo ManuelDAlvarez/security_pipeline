@@ -29,11 +29,17 @@ pipeline {
 		stage('ClonePolicy') {
 			steps {
 				withEnv(["PATH+EXTRA=$PROJ"]) {
+					sh "akamai appsec --section default clone-policy ODPP_78900 --config=40539  --prefix=${env.BUILD_ID}DPP  --json | jq '.policyId'"  > policyId
+					def output=readFile('policyId').trim()
+					echo "output=$output";
+
+					/* 
+					I am mising updating the 'Bypass Network List'. I do not know how to save the output and move on
+					
 					def returnShell = sh "akamai appsec --section default clone-policy ODPP_78900 --config=40539  --prefix=${env.BUILD_ID}DPP  --json | jq '.policyId'" 
 					archiveArtifacts "returnShell"
 					echo "returnShell=$returnShell"
-					/* 
-					I am mising updating the 'Bypass Network List'. I do not know how to save the output and move on
+
 					def reader = readFile('policyId')
 					echo reader
 					reader
