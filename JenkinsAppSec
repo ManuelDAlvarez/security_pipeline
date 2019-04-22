@@ -12,26 +12,32 @@ pipeline {
 			steps {
 				withEnv(["PATH+EXTRA=$PROJ"]) {
 					//sh "akamai appsec configs --section default --json | jq '.configurations[] | select (.name | test (\"gss-ta-demo\"))'"
-					sh "akamai appsec --section default clone --config=40539 --version=2"
+					//sh "akamai appsec --section default clone --config=40539 --version=STAGING"
 					//${NETWORK}"
+					echo "OK"
 				}
 			}
 		}
 		stage('AddHostname') {
 			steps {
 				withEnv(["PATH+EXTRA=$PROJ"]) {
-					sh "akamai appsec --section default add-hostname --config=40539 ${CONFIGNAME}"
+					//sh "akamai appsec --section default add-hostname --config=40539 ${CONFIGNAME}"
+					echo "also OK"
 				}
 			}
 		}
 		stage('ClonePolicy') {
 			steps {
 				withEnv(["PATH+EXTRA=$PROJ"]) {
-					sh "akamai appsec --section default clone-policy ODPP_78900 --config=40539  --prefix=${env.BUILD_ID}DPP  --json | jq '.policyId'" > policyId
-					archiveArtifacts "policyId"
+					def returnShell = sh "akamai appsec --section default clone-policy ODPP_78900 --config=40539  --prefix=${env.BUILD_ID}DPP  --json | jq '.policyId'" 
+					archiveArtifacts "returnShell"
+					echo "returnShell=$returnShell"
+					/* 
+					I am mising updating the 'Bypass Network List'. I do not know how to save the output and move on
 					def reader = readFile('policyId')
 					echo reader
 					reader
+					*/
 				}
 			}
 		}
