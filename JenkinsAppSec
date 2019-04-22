@@ -29,13 +29,17 @@ pipeline {
 		stage('ClonePolicy') {
 			steps {
 				withEnv(["PATH+EXTRA=$PROJ"]) {
+					script {
+                 	   def disk_size = sh(script: "df / --output=avail | tail -1", returnStdout: true).trim() as Integer
+                 	   println("disk_size = ${disk_size}")
+                	}
+					/*
 					OUTPUT = sh (
 						script: "ls",
 						returnStdout: true
 					).trim()
 					echo "OUTPUT: ${OUTPUT}"
-
-					/* 
+ 
 					I am mising updating the 'Bypass Network List'. I do not know how to save the output and move on
 					
 					def returnShell = sh "akamai appsec --section default clone-policy ODPP_78900 --config=40539  --prefix=${env.BUILD_ID}DPP  --json | jq '.policyId'" 
