@@ -29,9 +29,11 @@ pipeline {
 		stage('ClonePolicy') {
 			steps {
 				withEnv(["PATH+EXTRA=$PROJ"]) {
-					sh "akamai appsec --section default clone-policy ODPP_78900 --config=40539  --prefix=${env.BUILD_ID}DPP  --json | jq '.policyId'"  > policyId
-					def output=readFile('policyId').trim()
-					echo "output=$output";
+					OUTPUT = sh (
+						script: "akamai appsec --section default clone-policy ODPP_78900 --config=40539  --prefix=${env.BUILD_ID}DPP  --json | jq '.policyId'",
+						returnStdout: true
+					).trim()
+					echo "OUTPUT: ${OUTPUT}"
 
 					/* 
 					I am mising updating the 'Bypass Network List'. I do not know how to save the output and move on
@@ -43,6 +45,11 @@ pipeline {
 					def reader = readFile('policyId')
 					echo reader
 					reader
+
+										sh "akamai appsec --section default clone-policy ODPP_78900 --config=40539  --prefix=${env.BUILD_ID}DPP  --json | jq '.policyId'"  > policyId
+					def output=readFile('policyId').trim()
+					echo "output=$output";
+
 					*/
 				}
 			}
