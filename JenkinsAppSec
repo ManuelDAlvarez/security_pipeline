@@ -30,7 +30,7 @@ pipeline {
 			steps {
 				withEnv(["PATH+EXTRA=$PROJ"]) {
 					OUTPUT = sh (
-						script: sh "akamai appsec --section default clone-policy ODPP_78900 --config=40539  --prefix=xDPP  --json | jq '.policyId'",
+						script: sh "akamai appsec",
 						returnStdout: true
 					).trim()
 					echo "OUTPUT: ${OUTPUT}"
