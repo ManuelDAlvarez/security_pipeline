@@ -27,7 +27,11 @@ pipeline {
 		stage('ClonePolicy') {
 			steps {
 				withEnv(["PATH+EXTRA=$PROJ"]) {
-					sh "akamai appsec --section default clone-policy ODPP_78900 --config=40539  --prefix=${env.BUILD_ID}DPP  --json | jq '.policyId'"
+					sh "akamai appsec --section default clone-policy ODPP_78900 --config=40539  --prefix=${env.BUILD_ID}DPP  --json | jq '.policyId'" > policyId
+					archiveArtifacts "policyId"
+					def reader = readFile('policyId')
+					echo reader
+					reader
 				}
 			}
 		}
