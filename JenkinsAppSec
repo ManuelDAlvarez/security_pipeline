@@ -1,17 +1,32 @@
 pipeline {
 	agent any
 	parameters {
-	choice(name: 'NETWORK', choices: ['staging', 'production'], description: 'The network to activate the secure configuration')	
+		choice(name: 'NETWORK', choices: ['staging', 'production'], description: 'The network to clone from and activate to')
+		string(name: 'CONFIGNAME', defaultValue: "bigmanuel-eu.edgesuite-staging.net", description: 'The domain you are adding to the configuration') 
 	}
 	environment {
     	PROJ = "/bin:/usr/local/bin:/usr/bin"
 	}
 	stages {
-		stage('Messages') {
+		stage('CreateNewVersion') {
 			steps {
-				echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
-				echo "You say ${NETWORK}"
-				//sh "http --auth-type edgegrid -a default: GET :/papi/v1/contracts | jq "
+				withEnv(["PATH+EXTRA=$PROJ"]) {
+					sh "akamai appsec --section default clone --config=40539 --version=${NETWORK}"
+				}
+			}
+		}
+		stage('AddHostname') {
+			steps {
+				withEnv(["PATH+EXTRA=$PROJ"]) {
+					sh "akamai appsec --section default add-hostname --config=40539 ${CONFIGNAME}"
+				}
+			}
+		}
+		stage('ClonePolicy') {
+			steps {
+				withEnv(["PATH+EXTRA=$PROJ"]) {
+					sh "akamai appsec --section default clone-policy ODPP_78900 --config=40539  --prefix=${env.BUILD_ID}DPP  --json | jq '.policyId'"
+				}
 			}
 		}
 	}
