@@ -30,7 +30,7 @@ pipeline {
 			steps {
 				withEnv(["PATH+EXTRA=$PROJ"]) {
 					OUTPUT = sh (
-						script: (akamai appsec),
+						script: "ls",
 						returnStdout: true
 					).trim()
 					echo "OUTPUT: ${OUTPUT}"
