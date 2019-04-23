@@ -34,7 +34,7 @@ pipeline {
                  	   println("disk_size = ${disk_size}")
                 	}
                 	archiveArtifacts "disk_size"
-                	echo "I calculated ${disk_size}""
+                	echo "I calculated ${disk_size}"
 
 					/*
 					OUTPUT = sh (
