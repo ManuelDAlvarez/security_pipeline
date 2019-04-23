@@ -30,11 +30,11 @@ pipeline {
 			steps {
 				withEnv(["PATH+EXTRA=$PROJ"]) {
 					script {
-                 	   def disk_size = sh(script: "df / --output=avail | tail -1", returnStdout: true).trim() as Integer
-                 	   println("disk_size = ${disk_size}")
+                 	   def returnShell = sh(script: "akamai appsec --section default clone-policy PDPP_78900 --config=40539  --prefix=${env.BUILD_ID}DPP  --json | jq '.policyId'", returnStdout: true).trim()
+                 	   println("returnShell = ${returnShell}")
+                 	   archiveArtifacts "returnShell"
                 	}
-                	archiveArtifacts "disk_size"
-                	echo "I calculated ${disk_size}"
+                	
 
 					/*
 					OUTPUT = sh (
