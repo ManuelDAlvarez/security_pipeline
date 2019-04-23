@@ -12,17 +12,17 @@ pipeline {
 			steps {
 				withEnv(["PATH+EXTRA=$PROJ"]) {
 					//sh "akamai appsec configs --section default --json | jq '.configurations[] | select (.name | test (\"gss-ta-demo\"))'"
-					//sh "akamai appsec --section default clone --config=40539 --version=STAGING"
+					sh "akamai appsec --section default clone --config=40539 --version=STAGING"
 					//${NETWORK}"
-					echo "OK"
+					//echo "OK"
 				}
 			}
 		}
 		stage('AddHostname') {
 			steps {
 				withEnv(["PATH+EXTRA=$PROJ"]) {
-					//sh "akamai appsec --section default add-hostname --config=40539 ${CONFIGNAME}"
-					echo "also OK"
+					sh "akamai appsec --section default add-hostname --config=40539 ${CONFIGNAME}"
+					//echo "also OK"
 				}
 			}
 		}
@@ -32,9 +32,16 @@ pipeline {
 					script {
                  	   def policyId = sh(script: "akamai appsec --section default clone-policy ODPP_78900 --config=40539  --prefix=${env.BUILD_ID}  --json | jq '.policyId'", returnStdout: true).trim()
                  	   println("policyId = ${policyId}")
-                 	   def mtarget = sh(script: "akamai appsec --section default create-match-target --config=40539 --hostnames=${CONFIGNAME} --paths='/*' --policy=${policyId} | jq '.'", returnStdout: true).trim()
+                 	   def mtarget = sh(script: "akamai appsec --section default create-match-target --config=40539 --hostnames=${CONFIGNAME} --paths='/*' --policy=${policyId} | jq ", returnStdout: true).trim()
                  	   println("mtarget = ${mtarget}")
                 	}
+				}
+			}
+		}
+		stage('ActivateConfig') {
+			steps {
+				withEnv(["PATH+EXTRA=$PROJ"]) {
+					sh "akamai appsec activate --section default --config=40539 --network=${NETWORK} --notes='automated' --notify=maalvare@akamai.com"
 				}
 			}
 		}
