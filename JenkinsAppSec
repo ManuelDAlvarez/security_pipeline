@@ -30,34 +30,11 @@ pipeline {
 			steps {
 				withEnv(["PATH+EXTRA=$PROJ"]) {
 					script {
-                 	   def returnShell = sh(script: "akamai appsec --section default clone-policy ODPP_78900 --config=40539  --prefix=${env.BUILD_ID}  --json | jq '.policyId'", returnStdout: true).trim()
-                 	   println("returnShell = ${returnShell}")
-                 	   archiveArtifacts "returnShell"
+                 	   def policyId = sh(script: "akamai appsec --section default clone-policy ODPP_78900 --config=40539  --prefix=${env.BUILD_ID}  --json | jq '.policyId'", returnStdout: true).trim()
+                 	   println("policyId = ${policyId}")
+                 	   def mtarget = sh(script: "akamai appsec --section default create-match-target --hostnames=${CONFIGNAME} --paths='/*' --policy=${policyId} | jq '.'", returnStdout: true).trim()
+                 	   println("mtarget = ${mtarget}")
                 	}
-                	
-
-					/*
-					OUTPUT = sh (
-						script: "ls",
-						returnStdout: true
-					).trim()
-					echo "OUTPUT: ${OUTPUT}"
- 
-					I am mising updating the 'Bypass Network List'. I do not know how to save the output and move on
-					
-					def returnShell = sh "akamai appsec --section default clone-policy ODPP_78900 --config=40539  --prefix=${env.BUILD_ID}DPP  --json | jq '.policyId'" 
-					archiveArtifacts "returnShell"
-					echo "returnShell=$returnShell"
-
-					def reader = readFile('policyId')
-					echo reader
-					reader
-
-										sh "akamai appsec --section default clone-policy ODPP_78900 --config=40539  --prefix=${env.BUILD_ID}DPP  --json | jq '.policyId'"  > policyId
-					def output=readFile('policyId').trim()
-					echo "output=$output";
-
-					*/
 				}
 			}
 		}
