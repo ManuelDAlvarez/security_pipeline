@@ -30,7 +30,7 @@ pipeline {
 			steps {
 				withEnv(["PATH+EXTRA=$PROJ"]) {
 					script {
-                 	   def returnShell = sh(script: "akamai appsec --section default clone-policy ODPP_78900 --config=40539  --prefix=${env.BUILD_ID}DPP  --json | jq '.policyId'", returnStdout: true).trim()
+                 	   def returnShell = sh(script: "akamai appsec --section default clone-policy ODPP_78900 --config=40539  --prefix=${env.BUILD_ID}  --json | jq '.policyId'", returnStdout: true).trim()
                  	   println("returnShell = ${returnShell}")
                  	   archiveArtifacts "returnShell"
                 	}
